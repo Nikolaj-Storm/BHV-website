@@ -27,9 +27,9 @@
 
         .logo img {
             width: auto;
-            max-width: 350px; /* Increased width for the logo */
+            max-width: 350px;
             height: auto;
-            max-height: 120px; /* Slightly taller for the logo */
+            max-height: 120px;
             transition: transform 0.3s ease;
         }
 
@@ -129,6 +129,26 @@
             font-weight: bold;
         }
 
+        .download-button {
+            margin: 15px 0;
+            text-align: left;
+        }
+
+        .download-button a {
+            text-decoration: none;
+            background-color: #215966;
+            color: white;
+            padding: 7px 14px; /* Reduced size */
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 0.85rem; /* Reduced font size */
+            transition: background-color 0.3s ease;
+        }
+
+        .download-button a:hover {
+            background-color: #194d58;
+        }
+
         @media (max-width: 768px) {
             .about-section {
                 flex-direction: column-reverse; /* Image below text */
@@ -181,9 +201,12 @@
             <div class="about-section">
                 <div class="text-section">
                     <h1>Vores Servicekontrakt</h1>
+                    <div class="download-button">
+                        <a href="visuals/service_kontrakt.pdf" download>Download PDF af servicekontrakt</a>
+                    </div>
                     <div class="highlight-box" style="width: 120%; margin: auto;">
-    <iframe src="visuals/service_kontrakt.pdf" width="90%" height="600px" style="border: none;"></iframe>
-</div>
+                        <iframe src="visuals/service_kontrakt.pdf" width="90%" height="600px" style="border: none;"></iframe>
+                    </div>
                 </div>
             </div>
         </div>
