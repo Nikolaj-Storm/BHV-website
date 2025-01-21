@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nikolaj Storm Petersen - Lejeberegner</title>
+    <link rel="icon" href="visuals/favicon.png" type="image/png">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Playfair Display', serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: #F4E1CF;
+            color: #333;
+        }
+
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: block;
+        }
+
+        .logo img {
+            width: auto;
+            max-width: 350px;
+            height: auto;
+            max-height: 120px;
+            transition: transform 0.3s ease;
+        }
+
+        .navigation {
+            position: absolute;
+            top: 150px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .navigation a {
+            text-decoration: none;
+            font-weight: bold;
+            color: #215966;
+            font-size: 16px;
+            transition: font-size 0.3s ease;
+        }
+
+        .navigation a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+            position: relative;
+            margin-top: 200px;
+        }
+
+        .highlight-box {
+            background-color: #F9EDE4;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            width: 80%;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            text-align: center;
+            margin: 0 0 20px 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #215966;
+            color: #FFF;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #183d42;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #F9EDE4;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .cleaning-result {
+            margin-top: 10px;
+            text-align: center;
+            font-size: 1rem;
+            color: #333;
+        }
+
+        @media (max-width: 768px) {
+            .navigation a {
+                font-size: 12px;
+            }
+
+            .logo img {
+                max-width: 250px;
+                max-height: 100px;
+            }
+
+            .navigation {
+                top: 150px;
+                left: 50%;
+                transform: translateX(-50%);
+                flex-direction: row;
+                justify-content: center;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="logo">
+        <img src="visuals/Logo_1.png" alt="Logo">
+    </div>
+    <div class="navigation">
+        <a href="index.html">Hjem</a>
+        <a href="service.html">Vores Service</a>
+        <a href="Lejeberegner.html">Lejeberegner</a>
+        <a href="kontakt.html">Kontakt</a>
+    </div>
+    <div class="container">
+        <div class="content">
+            <h1>Lejeberegner</h1>
+            <h2>(Beregneren undergår pt. opdatering, og kan derfor være en smule upræcis)</h2>
+            <div class="highlight-box">
+                <form id="calculatorForm">
+                    <label for="dailyRent">Sats pr. overnatning (DKK)</label>
+                    <input type="number" id="dailyRent" placeholder="1500kr. er normalt på Christianshavn" required>
+
+                    <label for="rentalDays">Antal udlejningsdage om året</label>
+                    <input type="number" id="rentalDays" placeholder="Indtast antal lejedage" required>
+
+                    <label for="expenses">Rengøringsgebyr (DKK)</label>
+                    <input type="text" id="expenses" value="BHV's rengøringsgebyr" disabled>
+
+                    <label for="taxRate">Skattesats (%)</label>
+                    <input type="number" id="taxRate" placeholder="Gennemsnittet for såkaldt negativ kapitalindkomst er 33,6%">
+
+                    <button type="button" onclick="calculateEarnings()">Beregn Indtægt</button>
+                </form>
+                <div class="cleaning-result" id="cleaningResult" style="display: none;">
+                    Rengøringsgebyr er: <span id="cleaningCost">0</span> DKK
+                </div>
+                <div class="result" id="resultBox" style="display: none;">
+                    Din indtjening er: <span id="totalEarnings">0</span> DKK
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("rentalDays").addEventListener("input", () => {
+            const rentalDays = parseInt(document.getElementById("rentalDays").value) || 0;
+            const cleaningCost = 850 * (rentalDays / 5);
+            document.getElementById("expenses").value = cleaningCost.toFixed(2);
+            document.getElementById("cleaningCost").textContent = cleaningCost.toFixed(2);
+            document.getElementById("cleaningResult").style.display = "block";
+        });
+
+        function calculateEarnings() {
+            const dailyRent = parseFloat(document.getElementById("dailyRent").value);
+            const rentalDays = parseInt(document.getElementById("rentalDays").value);
+            const taxRate = parseFloat(document.getElementById("taxRate").value) / 100 || 0.6; // Default tax rate 60%
+
+            if (isNaN(dailyRent) || isNaN(rentalDays) || isNaN(taxRate)) {
+                alert("Udfyld venligst alle felter korrekt.");
+                return;
+            }
+
+            const income = dailyRent * rentalDays;
+            const provision = income * 0.331; // Deduct 33.1%
+            const cleaningCost = 850 * (rentalDays / 5); // Cleaning fee
+            const taxableIncome = Math.max(0, income - 33500); // Deduct base allowance
+            const tax = taxableIncome * taxRate; // Apply tax rate
+
+            const totalEarnings = income - provision - cleaningCost - tax;
+
+            document.getElementById("totalEarnings").textContent = totalEarnings.toFixed(2);
+            document.getElementById("resultBox").style.display = "block";
+        }
+    </script>
+</body>
+</html>
