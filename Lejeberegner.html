@@ -5,16 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nikolaj Storm Petersen - Lejeberegner</title>
     
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZG39HWNCCF"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-     gtag('js', new Date());
-
-     gtag('config', 'G-ZG39HWNCCF');
-    </script>
-    
     <link rel="icon" href="visuals/favicon.png" type="image/png">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@400;700&display=swap');
@@ -138,13 +128,42 @@
             border-radius: 8px;
             text-align: center;
             font-size: 1.2rem;
+            position: relative;
         }
 
-        .cleaning-result {
-            margin-top: 10px;
+        .info-icon {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #215966;
+            color: white;
             text-align: center;
-            font-size: 1rem;
-            color: #333;
+            font-size: 14px;
+            line-height: 20px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .info-popup {
+            display: none;
+            position: absolute;
+            top: 35px;
+            left: 0; /* Aligns the left of the pop-up with the result section */
+            background-color: #FFF;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 10px;
+            width: 250px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            font-size: 0.9rem;
+            text-align: left;
+            z-index: 100;
+        }
+
+        .info-icon:hover + .info-popup,
+        .info-icon:focus + .info-popup {
+            display: block;
         }
 
         @media (max-width: 768px) {
@@ -178,67 +197,71 @@
     <div class="navigation">
         <a href="index.html">Hjem</a>
         <a href="service.html">Vores Service</a>
-        <a href="Lejeberegner.html">Lejeberegner</a>
+        <a href="Lejeberegner.html">Indkomstberegner</a>
         <a href="kontakt.html">Kontakt</a>
     </div>
     <div class="container">
         <div class="content">
-            <h1>Lejeberegner</h1>
-            <h2>(Beregneren undergår pt. opdatering, og kan derfor være en smule upræcis)</h2>
+            <h1>Indkomstberegner</h1>
             <div class="highlight-box">
                 <form id="calculatorForm">
                     <label for="dailyRent">Sats pr. overnatning (DKK)</label>
-                    <input type="number" id="dailyRent" placeholder="1500kr. er normalt på Christianshavn" required>
+                    <input type="number" id="dailyRent" placeholder="F.eks. 1500 (Det er normalt på Christianshavn)" required>
 
-                    <label for="rentalDays">Antal udlejningsdage om året</label>
-                    <input type="number" id="rentalDays" placeholder="Indtast antal lejedage" required>
-
-                    <label for="expenses">Rengøringsgebyr (DKK)</label>
-                    <input type="text" id="expenses" value="BHV's rengøringsgebyr" disabled>
+                    <label for="rentalDays">Antal udlejningsdage</label>
+                    <input type="number" id="rentalDays" placeholder="F.eks. 40" required>
 
                     <label for="taxRate">Skattesats (%)</label>
-                    <input type="number" id="taxRate" placeholder="Gennemsnittet for såkaldt negativ kapitalindkomst er 33,6%">
+                    <input type="number" id="taxRate" value="33.6" required>
 
                     <button type="button" onclick="calculateEarnings()">Beregn Indtægt</button>
                 </form>
-                <div class="cleaning-result" id="cleaningResult" style="display: none;">
-                    Rengøringsgebyr er: <span id="cleaningCost">0</span> DKK
-                </div>
+
                 <div class="result" id="resultBox" style="display: none;">
-                    Din indtjening er: <span id="totalEarnings">0</span> DKK
+                    Indtægt efter Skat, Airbnb og BHV provision: <span id="finalEarnings">0</span> DKK
+                    <span class="info-icon" tabindex="0">?</span>
+                    <div class="info-popup">
+                        <strong>Forudsætninger:</strong><br>
+                        - Airbnb provision: 3,1%<br>
+                        - BHV provision: 30%<br>
+                        - Bundfradrag: 33.500 DKK<br>
+                        - 60 procent af den overskydende lejeindtægt beskattes som kapitalindkomst <br>
+                        - Skattesats: Skattesatsen er sat til 33,6 procent, som er gennemsnittet for såkaldt negativ kapitalindkomst. Skattesatsen kan ændres, så den afspejler din egen trækprocent.<br>
+                        - Note: beregneren er ikke retvisende for udlejningsindtægter over 50 000 over 12 måneder, da der her skal betales moms <br>
+                        - Sidste note: vi har forsøgt at lave en retvisende beregner, men den kan være upræcis, og hvis du vil have præcise beregninger, bør du selv lave dem, da vi ikke ønsker klager over vores. Men den bør selvfølgelig være rimlig retvisende.
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        document.getElementById("rentalDays").addEventListener("input", () => {
-            const rentalDays = parseInt(document.getElementById("rentalDays").value) || 0;
-            const cleaningCost = 850 * (rentalDays / 5);
-            document.getElementById("expenses").value = cleaningCost.toFixed(2);
-            document.getElementById("cleaningCost").textContent = cleaningCost.toFixed(2);
-            document.getElementById("cleaningResult").style.display = "block";
-        });
-
         function calculateEarnings() {
             const dailyRent = parseFloat(document.getElementById("dailyRent").value);
             const rentalDays = parseInt(document.getElementById("rentalDays").value);
-            const taxRate = parseFloat(document.getElementById("taxRate").value) / 100 || 0.6; // Default tax rate 60%
+            const taxRate = parseFloat(document.getElementById("taxRate").value) / 100;
 
             if (isNaN(dailyRent) || isNaN(rentalDays) || isNaN(taxRate)) {
                 alert("Udfyld venligst alle felter korrekt.");
                 return;
             }
 
-            const income = dailyRent * rentalDays;
-            const provision = income * 0.331; // Deduct 33.1%
-            const cleaningCost = 850 * (rentalDays / 5); // Cleaning fee
-            const taxableIncome = Math.max(0, income - 33500); // Deduct base allowance
-            const tax = taxableIncome * taxRate; // Apply tax rate
+            const lejeindtægt = dailyRent * rentalDays;
+            const airbnbProvision = lejeindtægt * 0.031;
+            const bhvProvision = lejeindtægt * 0.3;
+            const bundfradrag = 33500;
 
-            const totalEarnings = income - provision - cleaningCost - tax;
+            // Beregn kapitalindkomstbeskatning
+            const beskattetIndkomst = ((lejeindtægt - bundfradrag - airbnbProvision) * 0.6) * taxRate;
 
-            document.getElementById("totalEarnings").textContent = totalEarnings.toFixed(2);
+            // Beregn endelig indtægt
+            const endeligIndtægt = lejeindtægt - beskattetIndkomst - airbnbProvision - bhvProvision;
+
+            // Formater tal med mellemrum til tusinder
+            const formattedEarnings = new Intl.NumberFormat('da-DK').format(endeligIndtægt.toFixed(2));
+
+            // Vis resultatet
+            document.getElementById("finalEarnings").textContent = formattedEarnings;
             document.getElementById("resultBox").style.display = "block";
         }
     </script>
