@@ -6,6 +6,18 @@
     <title>Nikolaj Storm Petersen - Lejeberegner</title>
     
     <link rel="icon" href="visuals/favicon.png" type="image/png">
+    
+     <!-- Google tag (gtag.js) -->
+     <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZG39HWNCCF"></script>
+     <script>
+       window.dataLayer = window.dataLayer || [];
+       function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+ 
+      gtag('config', 'G-ZG39HWNCCF');
+     </script>
+
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@400;700&display=swap');
 
@@ -23,15 +35,11 @@
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            display: block;
         }
 
         .logo img {
-            width: auto;
             max-width: 350px;
             height: auto;
-            max-height: 120px;
-            transition: transform 0.3s ease;
         }
 
         .navigation {
@@ -49,7 +57,6 @@
             font-weight: bold;
             color: #215966;
             font-size: 16px;
-            transition: font-size 0.3s ease;
         }
 
         .navigation a:hover {
@@ -69,7 +76,6 @@
             align-items: center;
             width: 100%;
             max-width: 1200px;
-            position: relative;
             margin-top: 200px;
         }
 
@@ -77,19 +83,14 @@
             background-color: #F9EDE4;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
             width: 80%;
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
+            max-width: 800px;
+            margin-top: 20px;
         }
 
         h1 {
-            font-family: 'Playfair Display', serif;
             font-size: 2.5rem;
             text-align: center;
-            margin: 0 0 20px 0;
         }
 
         label {
@@ -148,44 +149,26 @@
         .info-popup {
             display: none;
             position: absolute;
-            top: 35px;
-            left: 0; /* Aligns the left of the pop-up with the result section */
+            top: 30px;
+            left: 0;
             background-color: #FFF;
             border: 1px solid #ccc;
             border-radius: 4px;
             padding: 10px;
-            width: 250px;
+            width: 300px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             font-size: 0.9rem;
             text-align: left;
             z-index: 100;
         }
 
-        .info-icon:hover + .info-popup,
-        .info-icon:focus + .info-popup {
-            display: block;
-        }
-
         @media (max-width: 768px) {
-            .navigation a {
-                font-size: 12px;
-            }
-
-            .logo img {
-                max-width: 250px;
-                max-height: 100px;
-            }
-
-            .navigation {
-                top: 150px;
-                left: 50%;
-                transform: translateX(-50%);
-                flex-direction: row;
-                justify-content: center;
-            }
-
             h1 {
                 font-size: 2rem;
+            }
+
+            .info-popup {
+                width: 90%;
             }
         }
     </style>
@@ -206,7 +189,7 @@
             <div class="highlight-box">
                 <form id="calculatorForm">
                     <label for="dailyRent">Sats pr. overnatning (DKK)</label>
-                    <input type="number" id="dailyRent" placeholder="F.eks. 1500 (Det er normalt på Christianshavn)" required>
+                    <input type="number" id="dailyRent" placeholder="F.eks. 1500" required>
 
                     <label for="rentalDays">Antal udlejningsdage</label>
                     <input type="number" id="rentalDays" placeholder="F.eks. 40" required>
@@ -219,8 +202,8 @@
 
                 <div class="result" id="resultBox" style="display: none;">
                     Indtægt efter Skat, Airbnb og BHV provision: <span id="finalEarnings">0</span> DKK
-                    <span class="info-icon" tabindex="0">?</span>
-                    <div class="info-popup">
+                    <span class="info-icon" tabindex="0" onclick="togglePopup()">?</span>
+                    <div class="info-popup" id="popupText">
                         <strong>Forudsætninger:</strong><br>
                         - Airbnb provision: 3,1%<br>
                         - BHV provision: 30%<br>
@@ -253,16 +236,16 @@
 
             // Beregn kapitalindkomstbeskatning
             const beskattetIndkomst = ((lejeindtægt - bundfradrag - airbnbProvision) * 0.6) * taxRate;
-
-            // Beregn endelig indtægt
             const endeligIndtægt = lejeindtægt - beskattetIndkomst - airbnbProvision - bhvProvision;
 
-            // Formater tal med mellemrum til tusinder
             const formattedEarnings = new Intl.NumberFormat('da-DK').format(endeligIndtægt.toFixed(2));
-
-            // Vis resultatet
             document.getElementById("finalEarnings").textContent = formattedEarnings;
             document.getElementById("resultBox").style.display = "block";
+        }
+
+        function togglePopup() {
+            const popup = document.getElementById("popupText");
+            popup.style.display = (popup.style.display === "block") ? "none" : "block";
         }
     </script>
 </body>
